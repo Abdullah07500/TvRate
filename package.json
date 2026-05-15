@@ -1,0 +1,30 @@
+{
+  "name": "tvrate",
+  "version": "1.0.0",
+  "description": "Community-based movie & TV show rating platform",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "movie",
+    "rating",
+    "tmdb"
+  ],
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^8.2.1",
+    "express-session": "^1.19.0",
+    "helmet": "^8.1.0",
+    "isomorphic-dompurify": "^2.35.0",
+    "mongoose": "^9.6.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

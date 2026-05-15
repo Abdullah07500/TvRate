@@ -1,0 +1,15 @@
+node_modules/
+.env
+.DS_Store
+*.log
+*.err
+*.db
+*.db-shm
+*.db-wal
+data/
+backups/
+.vscode/
+.idea/
+.claude/
+quick-restart.sh
+START.sh
