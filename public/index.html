@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="TvRate - Community-powered movie and TV show rating platform">
+    <title>Browse - TvRate</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        /* Search type toggle pills */
+        .search-filters{display:flex;gap:0;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:4px;width:fit-content;margin:16px auto 0}
+        .filter-option{margin:0}
+        .filter-option input[type="radio"]{position:absolute;opacity:0;width:0;height:0;pointer-events:none}
+        .filter-option span{display:block;padding:8px 24px;border-radius:999px;font-size:.9rem;font-weight:600;color:#aaa;cursor:pointer;transition:all .2s;user-select:none;white-space:nowrap}
+        .filter-option input[type="radio"]:checked+span{background:#01b4e4;color:#fff;box-shadow:0 2px 8px rgba(1,180,228,.4)}
+        .filter-option span:hover{color:#fff}
+
+        .user-result-grid{display:flex;flex-direction:column;gap:12px;max-width:700px;margin:0 auto}
+        .user-result-card{background:rgba(26,26,46,.9);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:16px;display:flex;align-items:center;gap:16px}
+        .user-result-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#01b4e4,#019fc5);display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:700;color:#fff;flex-shrink:0}
+        .user-result-info{flex:1;min-width:0}
+        .user-result-name{color:#fff;font-weight:700;font-size:1rem;text-decoration:none;display:block}
+        .user-result-name:hover{color:#01b4e4}
+        .user-result-bio{color:#aaa;font-size:.85rem;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .user-result-meta{color:#666;font-size:.8rem;margin-top:4px}
+        .user-result-actions{display:flex;align-items:center;gap:10px;flex-shrink:0}
+        .user-result-follow-btn{padding:7px 18px;border-radius:18px;border:none;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s}
+        .user-result-follow-btn.follow{background:#01b4e4;color:#fff}
+        .user-result-follow-btn.unfollow{background:rgba(255,255,255,.1);color:#ccc;border:1px solid rgba(255,255,255,.2)}
+        .user-result-profile-link{color:#01b4e4;font-size:.85rem;text-decoration:none;white-space:nowrap}
+        .user-result-profile-link:hover{text-decoration:underline}
+    </style>
+</head>
+<body>
+    <header class="site-header" id="site-nav"></header>
+
+    <section class="hero-search">
+        <div class="hero-content">
+            <h2 class="hero-title">Discover Your Next Favorite Movie</h2>
+            <div class="search-wrapper">
+                <input type="text" id="searchInput" placeholder="Search for movies, TV shows, or people..." class="hero-search-input">
+                <button id="searchBtn" class="hero-search-btn">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM19 19l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Search
+                </button>
+            </div>
+            <div class="search-filters">
+                <label class="filter-option"><input type="radio" name="searchType" value="multi" checked><span>Movies & TV</span></label>
+                <label class="filter-option"><input type="radio" name="searchType" value="users"><span>People</span></label>
+            </div>
+        </div>
+    </section>
+
+    <main class="main-content">
+        <div id="loadingIndicator" class="loading-state hidden"><div class="spinner"></div><p>Loading...</p></div>
+        <div id="errorMessage" class="error-banner hidden"></div>
+        <div id="noResultsMessage" class="no-results hidden"><p>No results found. Try a different search term.</p></div>
+        <section id="resultsSection" class="content-section hidden">
+            <div class="section-header"><h2 class="section-title">Search Results</h2></div>
+            <div id="resultsGrid" class="movie-grid"></div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-content">
+            <p>&copy; 2026 TvRate - Community Movie Ratings</p>
+            <p>Data provided by TMDb API</p>
+        </div>
+    </footer>
+
+    <div id="toast" class="toast hidden"><span id="toastMessage"></span></div>
+
+    <div id="addToListModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">⭐ Submit Review</h2>
+                <button class="modal-close" id="modalCloseBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="modalMovieInfo" class="modal-movie-info"></div>
+                <form id="addToListForm">
+                    <div class="form-group">
+                        <label for="userRating">Your Rating (1-10)</label>
+                        <div class="rating-input-wrapper">
+                            <input type="number" id="userRating" name="rating" min="1" max="10" step="0.1" required placeholder="8.5">
+                            <span class="rating-suffix">/ 10</span>
+                        </div>
+                        <div class="rating-stars" id="ratingStars"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="userReview">Your Review</label>
+                        <textarea id="userReview" name="review" rows="4" required placeholder="Share your thoughts..." maxlength="500"></textarea>
+                        <span class="char-counter"><span id="charCount">0</span>/500</span>
+                    </div>
+                    <div class="form-notice">
+
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="modal-btn modal-btn-cancel" id="modalCancelBtn">Cancel</button>
+                        <button type="submit" class="modal-btn modal-btn-submit">Submit Review</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>window.ACTIVE_NAV = 'browse';</script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/movie-card.js"></script>
+    <script src="/js/modal-handler.js"></script>
+    <script src="/js/app.js"></script>
+</body>
+</html>
