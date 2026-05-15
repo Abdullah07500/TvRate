@@ -119,6 +119,16 @@ User
 
 ---
 
+## Screenshots
+
+**Review Space**
+![Review Space](screenshots/review-space.png)
+
+**Top Movies**
+![Top Movies](screenshots/top-movies.png)
+
+---
+
 ## Future Work
 
 - Add pagination for search results
