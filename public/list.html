@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Space - TvRate</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .review-space-container { max-width: 800px; margin: 0 auto 60px; }
+        .review-space-tabs { display: flex; gap: 0; margin-bottom: 24px; background: rgba(0,0,0,.3); border: 1px solid rgba(255,255,255,.12); border-radius: 999px; padding: 4px; width: fit-content; }
+        .review-space-tab-btn {
+            padding: 8px 24px;
+            border: none;
+            background: transparent;
+            color: #aaa;
+            cursor: pointer;
+            font-size: .9rem;
+            font-weight: 600;
+            border-radius: 999px;
+            transition: all .2s;
+            white-space: nowrap;
+        }
+        .review-space-tab-btn.active { background: #01b4e4; color: #fff; box-shadow: 0 2px 8px rgba(1,180,228,.4); }
+        .review-space-tab-btn:hover:not(.active) { color: #fff; }
+        
+        .review-card { 
+            background: rgba(26,26,46,.9); 
+            border-radius: 12px; 
+            border: 1px solid rgba(255,255,255,.08); 
+            padding: 18px; 
+            margin-bottom: 16px; 
+            display: flex; 
+            gap: 16px; 
+            align-items: flex-start; 
+        }
+        .review-card-poster { 
+            width: 70px; 
+            min-width: 70px; 
+            aspect-ratio: 2/3; 
+            object-fit: cover; 
+            border-radius: 8px; 
+            background: rgba(0,0,0,.3);
+        }
+        .review-card-body { flex: 1; }
+        .review-card-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-start; 
+            margin-bottom: 8px; 
+        }
+        .review-card-username { 
+            color: #01b4e4; 
+            font-weight: 600; 
+            font-size: .9rem; 
+            text-decoration: none; 
+        }
+        .review-card-username:hover { text-decoration: underline; }
+        .review-card-date { color: #666; font-size: .8rem; }
+        .review-card-title { 
+            color: #fff; 
+            font-weight: 600; 
+            margin-bottom: 6px; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+        }
+        .review-card-type-badge { 
+            display: inline-block; 
+            padding: 2px 7px; 
+            border-radius: 4px; 
+            font-size: .7rem; 
+            font-weight: 600; 
+        }
+        .review-card-type-badge.movie { background: rgba(1,180,228,.2); color: #01b4e4; }
+        .review-card-type-badge.tv { background: rgba(255,152,0,.2); color: #ff9800; }
+        .review-card-rating { 
+            color: #f5c518; 
+            font-weight: 700; 
+            font-size: .95rem; 
+            margin-bottom: 8px; 
+        }
+        .review-card-text { 
+            color: #ccc; 
+            font-size: .9rem; 
+            line-height: 1.5; 
+        }
+        
+        .review-space-empty { 
+            text-align: center; 
+            padding: 80px 20px; 
+            color: #777; 
+        }
+        .review-space-empty-icon { font-size: 4rem; margin-bottom: 16px; }
+        .review-space-loading { 
+            text-align: center; 
+            padding: 40px 20px; 
+            color: #666; 
+        }
+        .review-space-loading-spinner { 
+            display: inline-block; 
+            width: 30px; 
+            height: 30px; 
+            border: 3px solid rgba(1,180,228,.2); 
+            border-top-color: #01b4e4; 
+            border-radius: 50%; 
+            animation: spin .8s linear infinite; 
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <header class="site-header" id="site-nav"></header>
+
+    <main class="main-content section-page">
+        <div class="page-header">
+            <h1 class="page-title">💬 Review Space</h1>
+            <p class="page-description">Discover and discuss movie reviews from the community</p>
+        </div>
+
+        <div id="loginPrompt" class="review-space-empty" style="display:none">
+            <div class="review-space-empty-icon">🔐</div>
+            <p>Login to see the Review Space</p>
+            <a href="/login" style="display:inline-block;margin-top:12px;padding:10px 32px;background:#01b4e4;color:#fff;border-radius:999px;text-decoration:none;font-weight:600;font-size:.95rem">Login</a>
+        </div>
+
+        <div class="review-space-container" id="reviewSpaceContainer" style="display:none">
+            <div class="review-space-tabs">
+                <button class="review-space-tab-btn active" data-tab="everyone">Everyone</button>
+                <button class="review-space-tab-btn" data-tab="following">Following</button>
+            </div>
+            <div id="reviewSpaceLoading" class="review-space-loading" style="display:none">
+                <div class="review-space-loading-spinner"></div>
+                <p>Loading reviews...</p>
+            </div>
+            <div id="reviewSpaceFeed"></div>
+        </div>
+
+        <div id="reviewSpaceEmpty" class="review-space-empty" style="display:none">
+            <div class="review-space-empty-icon" id="emptyIcon">📝</div>
+            <p id="emptyMessage">No reviews yet. Be the first to share your movie review.</p>
+            <a href="/browse" class="hero-search-btn">Browse Movies</a>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-content">
+            <p>&copy; 2026 TvRate - Community Movie Ratings</p>
+        </div>
+    </footer>
+
+    <div id="addToListModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">⭐ Submit Review</h2>
+                <button class="modal-close" id="modalCloseBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="modalMovieInfo" class="modal-movie-info"></div>
+                <form id="addToListForm">
+                    <div class="form-group">
+                        <label for="userRating">Your Rating (1-10)</label>
+                        <div class="rating-input-wrapper">
+                            <input type="number" id="userRating" min="1" max="10" step="0.1" required placeholder="8.5">
+                            <span class="rating-suffix">/ 10</span>
+                        </div>
+                        <div class="rating-stars" id="ratingStars"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="userReview">Your Review</label>
+                        <textarea id="userReview" rows="4" required placeholder="Share your thoughts..." maxlength="500"></textarea>
+                        <span class="char-counter"><span id="charCount">0</span>/500</span>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="modal-btn modal-btn-cancel" id="modalCancelBtn">Cancel</button>
+                        <button type="submit" class="modal-btn modal-btn-submit">Submit Review</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="toast" class="toast hidden"><span id="toastMessage"></span></div>
+
+    <script>window.ACTIVE_NAV = 'list';</script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/movie-card.js"></script>
+    <script src="/js/modal-handler.js"></script>
+    <script src="/js/review-space.js"></script>
+</body>
+</html>
