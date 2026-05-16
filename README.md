@@ -155,5 +155,6 @@ User
 |---|---|
 | Abdullah Alhagbani| 443018344 |
 | Abdullah Alwehaibi| 442015909 |
+| Hatem AlOtaibi | 444001365 |
 
 > CS1445 — Web Application Development
