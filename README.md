@@ -38,39 +38,8 @@ TvRate allows users to search for movies and TV shows, write reviews, save items
 
 ## Flow Chart
 
-```
-User
- |
- |-- Register / Login
- |
- |-- Browse
- |     |-- Search Movies & TV Shows
- |     |-- Search People by username
- |     |-- Open Review Modal
- |     |-- Add to Watchlist
- |     |-- Follow / Unfollow user
- |
- |-- Review Space
- |     |-- Everyone tab (all reviews)
- |     |-- Following tab (reviews from followed users)
- |
- |-- Top Movies
- |     |-- Top 10 (trending this week)
- |     |-- Top 100 (all-time highest rated)
- |     |-- Popular
- |
- |-- Coming Soon
- |     |-- Upcoming movie releases
- |
- |-- Profile Page
- |     |-- View user reviews
- |     |-- View user watchlist
- |     |-- View followers / following
- |     |-- Edit bio (own profile)
- |
- |-- My List
-       |-- View saved watchlist items
-```
+**App Navigation Flow Chart**
+![App Navigation Flow Chart](screenshots/flowchart.png)
 
 ---
 
