@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top 100 Movies - TvRate</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header class="site-header" id="site-nav"></header>
+    <main class="main-content section-page">
+        <div class="page-header">
+            <h1 class="page-title">🏆 Top 100 Movies of All Time</h1>
+            <p class="page-description">The highest-rated movies — click a poster to review</p>
+        </div>
+        <div id="loadingIndicator" class="loading-state"><div class="spinner"></div><p>Loading...</p></div>
+        <div id="errorMessage" class="error-banner hidden"></div>
+        <div id="moviesGrid" class="movie-grid"></div>
+    </main>
+    <footer class="site-footer"><div class="footer-content"><p>&copy; 2026 TvRate</p></div></footer>
+
+    <div id="addToListModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">⭐ Submit Review</h2>
+                <button class="modal-close" id="modalCloseBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="modalMovieInfo" class="modal-movie-info"></div>
+                <form id="addToListForm">
+                    <div class="form-group">
+                        <label for="userRating">Your Rating (1-10)</label>
+                        <div class="rating-input-wrapper">
+                            <input type="number" id="userRating" min="1" max="10" step="0.1" required placeholder="8.5">
+                            <span class="rating-suffix">/ 10</span>
+                        </div>
+                        <div class="rating-stars" id="ratingStars"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="userReview">Your Review</label>
+                        <textarea id="userReview" rows="4" required placeholder="Share your thoughts..." maxlength="500"></textarea>
+                        <span class="char-counter"><span id="charCount">0</span>/500</span>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="modal-btn modal-btn-cancel" id="modalCancelBtn">Cancel</button>
+                        <button type="submit" class="modal-btn modal-btn-submit">Submit Review</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="toast" class="toast hidden"><span id="toastMessage"></span></div>
+
+    <script>window.ACTIVE_NAV = 'top100';</script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/movie-card.js"></script>
+    <script src="/js/modal-handler.js"></script>
+    <script src="/js/top100.js"></script>
+</body>
+</html>
